@@ -25,6 +25,8 @@ int marcosreal[256] = {-1}; //(numero de proceso que utiliza el marco)
 int marcosrealmodificado[256] = {0}; //(0 o 1, modificado o no)
 int marcosvirtual[512] = {-1}; //(apunta al proceso del marco real que tenia la memoria real)
 int cantMarcos = 0;
+int cuentaVirtual = 0;
+int mintimestamp = 0; //cuando ya no haya más paginas que hayan sido creadas en tiempo 0 se elevara +1
 
 
 void cargarProceso()
@@ -56,13 +58,14 @@ residuo = introducidas % 256;
 
 int ultimoMarco = 0;
 
-//Si hay espacio
+//Si hay espacio en memoria real
 if(lleno == 0)
 {
     ultimoMarco = residuo + cantMarcos - 1;
     for(int i = cantMarcos; i < ultimoMarco; i++)
     {marcosrealtimestamps[i] = cputime;
     marcosreal[i] = p;
+    marcosvirtual[cuentaVirtual] = p;
     }
     cantMarcos += residuo;
 
@@ -72,7 +75,6 @@ else
     cout << "El proceso " << p <<" llenara la memoria" << endl;
     int faltantes = introducidas;
     //checar si quedan espacios libres
-
     if (cantMarcos < 256)
     {
         ultimoMarco = 256;
@@ -87,6 +89,8 @@ else
         cantMarcos = 255;
         cout << "Quedaron fuera " << restanteMarcos << " paginas. Se aplicara LRU" << endl;
     }
+    //Empezar LRU para insertar
+
 
 }
 
