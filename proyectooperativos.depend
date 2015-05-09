@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1431156117 source:c:\users\fofo\documents\programas custom\proyectooperativos\main.cpp
+	<iostream>
+	<string>
+	<fstream>
+	<sstream>
+	<math.h>
+	<cmath>
+	<time.h>
+
