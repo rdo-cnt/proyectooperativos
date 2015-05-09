@@ -49,9 +49,10 @@ istringstream (FileRead) >>p;
 
 //Empezar a meter datos
 
-int paginas = cantMarcos + ceil (n/8);
+int introducidas = ceil (n/8);
+int paginas = cantMarcos + introducidas;
 lleno = paginas/256;
-residuo = paginas % 256;
+residuo = introducidas % 256;
 
 int ultimoMarco = 0;
 
@@ -68,27 +69,32 @@ if(lleno == 0)
 }
 else
 {
+    cout << "El proceso " << p <<" llenara la memoria" << endl;
+    int faltantes = introducidas;
     //checar si quedan espacios libres
-    int faltantes;
+
     if (cantMarcos < 256)
     {
         ultimoMarco = 256;
         int restanteMarcos = 255-cantMarcos;
+
         for(int i = cantMarcos; i < ultimoMarco; i++)
         {
           marcosrealtimestamps[i] = cputime;
           marcosreal[i] = p;
 
         }
-        cantMarcos += residuo;
+        cantMarcos = 255;
+        cout << "Quedaron fuera " << restanteMarcos << " paginas. Se aplicara LRU" << endl;
     }
+
 }
 
 cputime++;
 
 
 //Ver si se superaron los 256 marcos con texto
-cout << "Lleno: " << lleno << " Paginas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco-1]<< " tiempo entrada: " << marcosrealtimestamps[ultimoMarco-1] << endl;
+cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco-1]<< " tiempo entrada: " << marcosrealtimestamps[ultimoMarco-1] << endl;
 
 }
 
