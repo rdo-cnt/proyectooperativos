@@ -61,14 +61,18 @@ int ultimoMarco = 0;
 //Si hay espacio en memoria real
 if(lleno == 0)
 {
-    ultimoMarco = residuo + cantMarcos - 1;
+    ultimoMarco = (residuo + cantMarcos) ;
+    //cout << residuo << " " <<cantMarcos << " " <<ultimoMarco << endl;
     for(int i = cantMarcos; i < ultimoMarco; i++)
-    {marcosrealtimestamps[i] = cputime;
-    marcosreal[i] = p;
-    marcosvirtual[cuentaVirtual] = p;
+    {
+        //asignar cputime para el timestamp
+        marcosrealtimestamps[i] = cputime;
+        marcosreal[i] = p;
+        marcosvirtual[cuentaVirtual] = p;
+        //subir el cputime
+        cputime++;
     }
     cantMarcos += residuo;
-
 }
 else
 {
@@ -84,6 +88,8 @@ else
         {
           marcosrealtimestamps[i] = cputime;
           marcosreal[i] = p;
+          //subir el cputime
+          cputime++;
 
         }
         cantMarcos = 255;
@@ -94,12 +100,27 @@ else
 
 }
 
-cputime++;
+
 
 
 //Ver si se superaron los 256 marcos con texto
-cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco-1]<< " tiempo entrada: " << marcosrealtimestamps[ultimoMarco-1] << endl;
+cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco]<< " tiempo entrada: " << marcosrealtimestamps[ultimoMarco] << endl;
 
+}
+
+void Debug()
+{
+   int proceso = -1;
+    for (int i = 0; i < 256; i++)
+    {
+        if(marcosreal[i] != proceso)
+        {
+            cout << "Del proceso : " << marcosreal[i] << endl;
+            proceso = marcosreal[i];
+        }
+
+        cout << marcosrealtimestamps[i] << endl;
+    }
 }
 
 int main()
@@ -119,6 +140,10 @@ int main()
 
 }//while
     File.close();
-    cout << "Hello world!" << endl;
+
+    //Ver si estan correcto los datos
+    Debug();
+
+
     return 0;
 }
