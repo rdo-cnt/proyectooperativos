@@ -27,6 +27,7 @@ int marcosvirtual[512] = {-1}; //(apunta al proceso del marco real que tenia la 
 int cantMarcos = 0;
 int cuentaVirtual = 0;
 int mintimestamp = 0; //cuando ya no haya más paginas que hayan sido creadas en tiempo 0 se elevara +1
+int pagefaults = 0;
 
 
 void cargarProceso()
@@ -113,7 +114,21 @@ cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducid
 void Debug()
 {
    int proceso = -1;
+   int ini = -1, final = -1;
+   cout << "Memoria real" << endl;
     for (int i = 0; i < 256; i++)
+    {
+        if(marcosreal[i] != proceso)
+        {
+            cout << "Del proceso : " << marcosreal[i] << endl;
+            proceso = marcosreal[i];
+        }
+
+        cout << marcosrealtimestamps[i] << endl;
+    }
+    proceso = -1;
+    cout << "Memoria virtual" << endl;
+    for (int i = 0; i < 512; i++)
     {
         if(marcosreal[i] != proceso)
         {
