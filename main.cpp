@@ -140,9 +140,10 @@ if (cantMarcos < 256)
         ultimoMarco = i;
     }
 }
-else
+if (cantMarcos > 255)
 {
     cout << "Esta lleno este pedo" << endl;
+    //empezar a hacer LRU aqui
 }
 //Ver si se superaron los 256 marcos con texto
 cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
