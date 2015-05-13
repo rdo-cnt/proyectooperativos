@@ -26,6 +26,7 @@ int marcosreal[256]; //(numero de proceso que utiliza el marco)
 int marcosrealmodificado[256] = {0}; //(0 o 1, modificado o no)
 int marcosrealreferenciado[256] = {0}; //(0 o 1, referenciado o no)
 int marcosvirtual[512];//(apunta al proceso del marco real que tenia la memoria virtual)
+int memorybusy = 0; //con 256 se llena
 
 int cantMarcos = 0;
 int cuentaVirtual = 0;
@@ -64,6 +65,7 @@ void compactaMemoriaVirtual(){
         cout << "Ya esta compactado" << endl;
     } else {
         int espaciosRecorrer = (terminaHueco - empiezaHueco)+1; // numero de marcos que se debe de reposicionar cada pagina
+        cuentaVirtual -= espaciosRecorrer;
         for (int i=terminaHueco+1; i<empiezaVacio; i++){ // recorrer las paginas despues del hueco liberado
             {
              marcosvirtual[i-espaciosRecorrer] = marcosvirtual[i];
@@ -74,7 +76,7 @@ void compactaMemoriaVirtual(){
         // marcar como libres (-1) la cantidad de marcos en el hueco al final de los marcos ocupados
         for (int i=empiezaVacio-espaciosRecorrer; i<empiezaVacio; i++){
             marcosvirtual[i] = -1;
-            marcosvirtualtimestamps[i] = 0;
+            marcosvirtualtimestamps[i] = -0;
         }
     }
 }
@@ -86,7 +88,7 @@ void cargarProceso()
 double n = 0;
 int p = 0;
 int residuo = 0; //utilizado para saber cuantos marcos de paginación hay que reemplazar cuando se llene la memoria
-int lleno = 0; // cuando se pase de 256 paginas/marcos, este estara arriba de 1
+bool lleno = 0; // avisa si esta lleno
 
 
 //leer n
@@ -106,9 +108,48 @@ int introducidas = ceil (n/8);
 int paginas = cantMarcos + introducidas;
 lleno = paginas/256;
 residuo = introducidas % 256;
-
+int contadorpaginas = 0;
 int ultimoMarco = 0;
 
+if (cantMarcos < 256)
+{
+       for(int i = 0; i < 256 && contadorpaginas < introducidas ; i++)
+    {
+        if (marcosreal[i] == -1)
+        {
+        //asignar cputime para el timestamp
+        marcosrealtimestamps[i] = cputime;
+        marcosvirtualtimestamps[i] = cputime;
+        marcosreal[i] = p;
+        marcosvirtual[cuentaVirtual] = p;
+
+        //subir el cputime, pagefaults, cantMArcos y cuenta Virtual
+        cuentaVirtual++;
+        cputime++;
+        pagefaults++;
+        memorybusy++;
+        contadorpaginas++;
+        cantMarcos++;
+        if(cantMarcos > 255)
+        {
+            lleno = true;
+          break;
+        }
+
+        }
+        ultimoMarco = i;
+    }
+}
+else
+{
+    cout << "Esta lleno este pedo" << endl;
+}
+//Ver si se superaron los 256 marcos con texto
+cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
+
+
+
+/*
 //Si hay espacio en memoria real
 if(lleno == 0)
 {
@@ -163,12 +204,10 @@ else
 
 
 }
+*/
 
 
 
-
-//Ver si se superaron los 256 marcos con texto
-cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco-1]<< " tiempo entrada: " << marcosrealtimestamps[ultimoMarco-1] << endl;
 
 }
 
@@ -185,18 +224,21 @@ void liberarPaginas()
     File>>FileRead;
     istringstream (FileRead) >>idProceso;
 
+    int restaramarcos = 0;
     // buscar en memoria real los marcos que pertenecen al id del proceso
     for (int i=0; i<256; i++) {
         if (marcosreal[i]==idProceso){
             marcosreal[i] = -1; // -1 es el valor default de memoria representando vacio
             marcosrealmodificado[i] = 0; // indicar como no modificado
             marcosrealreferenciado[i] = 0; // indicar como no referenciado
+            restaramarcos++;
             // actualizar timestamp?
             // registrar los cambios
             marcosLiberadosReal[cantidadMarcosLiberadosReal] = i;
             cantidadMarcosLiberadosReal++;
         }
     }
+    cantMarcos -= restaramarcos;
 
     // liberar los marcos de pagina en memoria secundaria de swapping
     for (int i=0; i<512; i++){
