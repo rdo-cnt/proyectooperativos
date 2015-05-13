@@ -65,11 +65,16 @@ void compactaMemoriaVirtual(){
     } else {
         int espaciosRecorrer = (terminaHueco - empiezaHueco)+1; // numero de marcos que se debe de reposicionar cada pagina
         for (int i=terminaHueco+1; i<empiezaVacio; i++){ // recorrer las paginas despues del hueco liberado
-            marcosvirtual[i-espaciosRecorrer] = marcosvirtual[i];
+            {
+             marcosvirtual[i-espaciosRecorrer] = marcosvirtual[i];
+             marcosvirtualtimestamps[i-espaciosRecorrer] = marcosvirtualtimestamps[i];
+            }
+
         }
         // marcar como libres (-1) la cantidad de marcos en el hueco al final de los marcos ocupados
         for (int i=empiezaVacio-espaciosRecorrer; i<empiezaVacio; i++){
             marcosvirtual[i] = -1;
+            marcosvirtualtimestamps[i] = 0;
         }
     }
 }
