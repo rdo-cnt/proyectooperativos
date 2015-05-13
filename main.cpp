@@ -201,7 +201,7 @@ int main()
     File.close();
 
     //Ver si estan correcto los datos
-    //Debug();
+    Debug();
 
 
     return 0;
