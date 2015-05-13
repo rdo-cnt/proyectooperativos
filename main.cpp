@@ -68,14 +68,18 @@ if(lleno == 0)
     //cout << residuo << " " <<cantMarcos << " " <<ultimoMarco << endl;
     for(int i = cantMarcos; i < ultimoMarco; i++)
     {
+        if (marcosreal[i] == -1)
+        {
         //asignar cputime para el timestamp
         marcosrealtimestamps[i] = cputime;
         marcosreal[i] = p;
         marcosvirtual[cuentaVirtual] = p;
 
-        //subir el cputime y cuenta Virtual
+        //subir el cputime, pagefaults y cuenta Virtual
         cuentaVirtual++;
         cputime++;
+        pagefaults++;
+        }
     }
     cantMarcos += residuo;
 }
@@ -91,13 +95,16 @@ else
 
         for(int i = cantMarcos; i < ultimoMarco; i++)
         {
+            if (marcosreal[i] == -1)
+        {
           marcosrealtimestamps[i] = cputime;
           marcosreal[i] = p;
           marcosvirtual[cuentaVirtual] = p;
-          //subir el cputime y cuenta Virtual
+           //subir el cputime, pagefaults y cuenta Virtual
         cuentaVirtual++;
         cputime++;
-
+        pagefaults++;
+        }
         }
         cantMarcos = 255;
         cout << "Quedaron fuera " << restanteMarcos << " paginas. Se aplicara LRU" << endl;
@@ -195,7 +202,10 @@ int    proceso = -2;
             }
                 else
                 {
-                cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;
+                    if (i != 255)
+                    {cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;}
+                    else
+                    {cout << "Del marco : " << ini << " al marco " << final+1 << " no hay nada" << endl;}
                 }
 
         ini = i;
@@ -228,7 +238,10 @@ int    proceso = -2;
                 }
                 else
                 {
-                cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;
+                    if (i != 511)
+                {cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;}
+                    else
+                {cout << "Del marco : " << ini << " al marco " << final+1 << " no hay nada" << endl;}
                 }
             }
             ini = i;
