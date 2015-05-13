@@ -69,7 +69,9 @@ if(lleno == 0)
         marcosrealtimestamps[i] = cputime;
         marcosreal[i] = p;
         marcosvirtual[cuentaVirtual] = p;
-        //subir el cputime
+
+        //subir el cputime y cuenta Virtual
+        cuentaVirtual++;
         cputime++;
     }
     cantMarcos += residuo;
@@ -79,7 +81,7 @@ else
     cout << "El proceso " << p <<" llenara la memoria" << endl;
     int faltantes = introducidas;
     //checar si quedan espacios libres
-    if (cantMarcos < 256)
+    if (cantMarcos < 255)
     {
         ultimoMarco = 256;
         int restanteMarcos = 255-cantMarcos;
@@ -104,7 +106,7 @@ else
 
 
 //Ver si se superaron los 256 marcos con texto
-cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco]<< " tiempo entrada: " << marcosrealtimestamps[ultimoMarco] << endl;
+cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco-1]<< " tiempo entrada: " << marcosrealtimestamps[ultimoMarco-1] << endl;
 
 }
 
