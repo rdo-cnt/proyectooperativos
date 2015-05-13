@@ -16,7 +16,8 @@ string FileRead;
 
 //Timer para LRU
 
-int marcosrealtimestamps[256] = {-1}; //(para calcular tiempo en el que se modifico)
+int marcosrealtimestamps[256] = {0}; //(para calcular tiempo en el que se modifico)
+int marcosvirtualtimestamps[512] = {0}; //(para relacionar marcos virtuales con reales)
 int cputime = 0;
 
 //variables que manejan marcos
@@ -110,14 +111,19 @@ if(lleno == 0)
     //cout << residuo << " " <<cantMarcos << " " <<ultimoMarco << endl;
     for(int i = cantMarcos; i < ultimoMarco; i++)
     {
+        if (marcosreal[i] == -1)
+        {
         //asignar cputime para el timestamp
         marcosrealtimestamps[i] = cputime;
+        marcosvirtualtimestamps[i] = cputime;
         marcosreal[i] = p;
         marcosvirtual[cuentaVirtual] = p;
 
-        //subir el cputime y cuenta Virtual
+        //subir el cputime, pagefaults y cuenta Virtual
         cuentaVirtual++;
         cputime++;
+        pagefaults++;
+        }
     }
     cantMarcos += residuo;
 }
@@ -133,13 +139,17 @@ else
 
         for(int i = cantMarcos; i < ultimoMarco; i++)
         {
+            if (marcosreal[i] == -1)
+        {
           marcosrealtimestamps[i] = cputime;
+          marcosvirtualtimestamps[i] = cputime;
           marcosreal[i] = p;
           marcosvirtual[cuentaVirtual] = p;
-          //subir el cputime y cuenta Virtual
+           //subir el cputime, pagefaults y cuenta Virtual
         cuentaVirtual++;
         cputime++;
-
+        pagefaults++;
+        }
         }
         cantMarcos = 255;
         cout << "Quedaron fuera " << restanteMarcos << " paginas. Se aplicara LRU" << endl;
@@ -240,7 +250,10 @@ int    proceso = -2;
             }
                 else
                 {
-                cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;
+                    if (i != 255)
+                    {cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;}
+                    else
+                    {cout << "Del marco : " << ini << " al marco " << final+1 << " no hay nada" << endl;}
                 }
 
         ini = i;
@@ -273,7 +286,10 @@ int    proceso = -2;
                 }
                 else
                 {
-                cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;
+                    if (i != 511)
+                {cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;}
+                    else
+                {cout << "Del marco : " << ini << " al marco " << final+1 << " no hay nada" << endl;}
                 }
             }
             ini = i;
@@ -283,6 +299,79 @@ int    proceso = -2;
     }
 }
 
+void accesarVirtual()
+{
+    cout << "corriendo Accesso" << endl;
+    int d, p, m;
+
+    //leer d
+    File>>FileRead;
+    istringstream (FileRead) >>d;
+
+    //leer p
+    File>>FileRead;
+    istringstream (FileRead) >>p;
+
+    //leer m
+    File>>FileRead;
+    istringstream (FileRead) >>m;
+
+    int marcovirtualbuscado = d/8;
+    int virtualencontrado = -1;
+
+    for(int i = 0; i < 512; i++ )
+    {
+        if(marcosvirtual[i] == p)
+        {
+
+           virtualencontrado = i;
+           cout << "Se hizo break!" << endl;
+           break;
+        }
+    }
+    if(virtualencontrado != -1)
+    {
+        int contador = 0;
+       for(int i = virtualencontrado; i < 512; i++)
+       {
+           //se encuentra el marco buscado del proceso
+         if(contador == marcovirtualbuscado)
+         {
+           for (int j = 0; j < 256; j++)
+           {
+               if (marcosrealtimestamps[j] == marcosvirtualtimestamps[i])
+               {
+                   cout << "Se encontro la pagina " << marcovirtualbuscado << " del proceso " << p << " en el marco " << virtualencontrado+marcovirtualbuscado << " de la memoria virtual" << endl;
+                   cout << "Se encuentra en el marco " << j << " de la memoria real" << endl;
+                  if(marcosrealtimestamps[j] == mintimestamp)
+                  {
+                    mintimestamp++;
+                    cout << "El marco " << j << " en real solia ser el LRU. Ya no lo es " << endl;
+                  }
+
+                  marcosrealtimestamps[j] =  cputime;
+                  cputime++;
+                  //si m = 0, referencia
+                  if (m == 0)
+                    marcosrealreferenciado[j] = 1;
+                  //si m = 1, modificacion
+                  else
+                    marcosrealmodificado[j] = 1;
+               }
+           }
+         }
+         contador++;
+        }
+
+    }
+
+    else
+    {
+       cout << "el proceso " << p << "no existe." << endl;
+    }
+
+
+}
 int main()
 {
     std::fill_n(marcosreal, 256, -1);
@@ -294,7 +383,7 @@ int main()
         File>>FileRead; //agarra cada caracter separado por un espacio.
 
         if(FileRead == "P" || FileRead == "p"){cargarProceso();}
-        //else if(FileRead == "A" || FileRead == "a"){A();}
+        else if(FileRead == "A" || FileRead == "a"){accesarVirtual();}
         else if(FileRead == "L" || FileRead == "l"){liberarPaginas();}
         //else if(FileRead == "E" || FileRead == "e"){E();}
         //else if(FileRead == "F" || FileRead == "f"){F();}
