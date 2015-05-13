@@ -31,6 +31,48 @@ int cuentaVirtual = 0;
 int mintimestamp = 0; //cuando ya no haya más paginas que hayan sido creadas en tiempo 0 se elevara +1
 int pagefaults = 0;
 
+// Esta funcion compacta la memoria virtual despues de que un proceso es liberado
+void compactaMemoriaVirtual(){
+    int empiezaHueco=-1; // primera posicion donde hay un -1 (despues de liberar)
+    int terminaHueco=-1; // ultima posicion donde hay un -1 (despues de liberar)
+    int empiezaVacio=-1; // posicion a partir de la cual no hay procesos en memoria virtual
+
+    // buscar en memoria virtual por las posiciones declaradas anteriormente
+    for (int i = 0; i<512; i++){
+        if (marcosvirtual[i]==-1){
+            empiezaHueco = i;
+            for (int j=empiezaHueco+1; j<512; j++){ // buscar el final del hueco a partir de la posicion inicial del hueco
+                if (marcosvirtual[j]==-1 && marcosvirtual[j+1]!= -1){ // identificar que el hueco se termine en esta posicion
+                    terminaHueco = j;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    // buscar la posicion inicial de la memoria virtual disponible (despues del hueco causado por la liberacion del proceso)
+    for (int i=terminaHueco+1; i<512; i++) {
+        if(marcosvirtual[i]==-1){
+            empiezaVacio = i;
+            break;
+        }
+    }
+    // esta condicion se cumple cuando al buscar el inicio de los vacios no entra al ciclo ya que
+    // el fin del hueco es justamente el fin de la memoria virtual (ya esta compactado)
+    if (empiezaVacio==-1){
+        cout << "Ya esta compactado" << endl;
+    } else {
+        int espaciosRecorrer = (terminaHueco - empiezaHueco)+1; // numero de marcos que se debe de reposicionar cada pagina
+        for (int i=terminaHueco+1; i<empiezaVacio; i++){ // recorrer las paginas despues del hueco liberado
+            marcosvirtual[i-espaciosRecorrer] = marcosvirtual[i];
+        }
+        // marcar como libres (-1) la cantidad de marcos en el hueco al final de los marcos ocupados
+        for (int i=empiezaVacio-espaciosRecorrer; i<empiezaVacio; i++){
+            marcosvirtual[i] = -1;
+        }
+    }
+}
+
 
 void cargarProceso()
 {
@@ -133,6 +175,7 @@ void liberarPaginas()
         if (marcosreal[i]==idProceso){
             marcosreal[i] = -1; // -1 es el valor default de memoria representando vacio
             marcosrealmodificado[i] = 0; // indicar como no modificado
+            marcosrealreferenciado[i] = 0; // indicar como no referenciado
             // actualizar timestamp?
             // registrar los cambios
             marcosLiberadosReal[cantidadMarcosLiberadosReal] = i;
@@ -149,6 +192,8 @@ void liberarPaginas()
             cantidadMarcosLiberadosVirtual++;
         }
     }
+    // compactar los huecos en memoria virtual
+    compactaMemoriaVirtual();
     // desplegar resultados
     // memoria principal
     if (cantidadMarcosLiberadosReal>0){
@@ -189,9 +234,9 @@ int    proceso = -2;
             if (marcosreal[final] != -1)
             {
                 if (i != 255)
-              {cout << "Proceso : " << marcosreal[final] << " ocupa paginas " << ini << "-" << final << " en mem real" << endl;}
+              {cout << "Proceso : " << marcosreal[final] << " ocupa marcos " << ini << "-" << final << " en mem real" << endl;}
               else
-              {cout << "Proceso : " << marcosreal[final] << " ocupa paginas " << ini << "-" << final+1 << " en mem real" << endl;}
+              {cout << "Proceso : " << marcosreal[final] << " ocupa marcos " << ini << "-" << final+1 << " en mem real" << endl;}
             }
                 else
                 {
@@ -220,10 +265,10 @@ int    proceso = -2;
                 if (marcosvirtual[final] != -1)
                 {
                     if (i != 511)
-                  {cout << "Proceso : " << marcosvirtual[final] << " ocupa paginas " << ini << "-" << final << " en mem virtual" << endl;}
+                  {cout << "Proceso : " << marcosvirtual[final] << " ocupa marcos " << ini << "-" << final << " en mem virtual" << endl;}
                   else
                  {
-                   cout << "Proceso : " << marcosvirtual[final] << " ocupa paginas " << ini << "-" << final+1 << " en mem virtual" << endl;
+                   cout << "Proceso : " << marcosvirtual[final] << " ocupa marcos " << ini << "-" << final+1 << " en mem virtual" << endl;
                  }
                 }
                 else
