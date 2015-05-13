@@ -21,9 +21,11 @@ int cputime = 0;
 
 //variables que manejan marcos
 
-int marcosreal[256] = {-1}; //(numero de proceso que utiliza el marco)
+int marcosreal[256]; //(numero de proceso que utiliza el marco)
 int marcosrealmodificado[256] = {0}; //(0 o 1, modificado o no)
-int marcosvirtual[512] = {-1}; //(apunta al proceso del marco real que tenia la memoria real)
+int marcosrealreferenciado[256] = {0}; //(0 o 1, referenciado o no)
+int marcosvirtual[512];//(apunta al proceso del marco real que tenia la memoria virtual)
+
 int cantMarcos = 0;
 int cuentaVirtual = 0;
 int mintimestamp = 0; //cuando ya no haya más paginas que hayan sido creadas en tiempo 0 se elevara +1
@@ -85,14 +87,16 @@ else
     if (cantMarcos < 255)
     {
         ultimoMarco = 256;
-        int restanteMarcos = 255-cantMarcos;
+        int restanteMarcos = 256-cantMarcos;
 
         for(int i = cantMarcos; i < ultimoMarco; i++)
         {
           marcosrealtimestamps[i] = cputime;
           marcosreal[i] = p;
-          //subir el cputime
-          cputime++;
+          marcosvirtual[cuentaVirtual] = p;
+          //subir el cputime y cuenta Virtual
+        cuentaVirtual++;
+        cputime++;
 
         }
         cantMarcos = 255;
@@ -170,36 +174,74 @@ void liberarPaginas()
 
 void Debug()
 {
-   int proceso = -1;
-   int ini = -1, final = -1;
+   int ini = 0, final = -1;
    cout << "Memoria real" << endl;
-
+int    proceso = -2;
     for (int i = 0; i < 256; i++)
     {
-        if(marcosreal[i] != proceso)
+        if(marcosreal[i] != proceso || i == 255 )
         {
-            cout << "Del proceso : " << marcosreal[i] << endl;
-            proceso = marcosreal[i];
+            if (i != 0)
+            {
+                final = i -1;
+
+
+            if (marcosreal[final] != -1)
+            {
+                if (i != 255)
+              {cout << "Proceso : " << marcosreal[final] << " ocupa paginas " << ini << "-" << final << " en mem real" << endl;}
+              else
+              {cout << "Proceso : " << marcosreal[final] << " ocupa paginas " << ini << "-" << final+1 << " en mem real" << endl;}
+            }
+                else
+                {
+                cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;
+                }
+
+        ini = i;
+
+        }
+        proceso = marcosreal[i];
+
         }
 
-        cout << marcosrealtimestamps[i] << endl;
     }
-    proceso = -1;
+    ini = 0; final = -1;
+    proceso = -2;
     cout << "Memoria virtual" << endl;
     for (int i = 0; i < 512; i++)
     {
-        if(marcosreal[i] != proceso)
+         if(marcosvirtual[i] != proceso || i == 511)
         {
-            cout << "Del proceso : " << marcosreal[i] << endl;
-            proceso = marcosreal[i];
-        }
+            if (i != 0)
+            {
+                final = i -1;
 
-        cout << marcosrealtimestamps[i] << endl;
+                if (marcosvirtual[final] != -1)
+                {
+                    if (i != 511)
+                  {cout << "Proceso : " << marcosvirtual[final] << " ocupa paginas " << ini << "-" << final << " en mem virtual" << endl;}
+                  else
+                 {
+                   cout << "Proceso : " << marcosvirtual[final] << " ocupa paginas " << ini << "-" << final+1 << " en mem virtual" << endl;
+                 }
+                }
+                else
+                {
+                cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;
+                }
+            }
+            ini = i;
+
+        }
+         proceso = marcosvirtual[i];
     }
 }
 
 int main()
 {
+    std::fill_n(marcosreal, 256, -1);
+    std::fill_n(marcosvirtual, 512, -1);
     //Cargar archivo de texto
     File.open("texto.txt");
     while (!File.eof()) {
@@ -218,6 +260,12 @@ int main()
 
     //Ver si estan correcto los datos
     Debug();
+
+    /*for (int i = 0; i < 255; i++)
+    {
+        cout << "Proceso : " << marcosreal[i] << endl;
+    }
+*/
 
 
     return 0;
