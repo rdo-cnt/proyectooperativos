@@ -111,11 +111,69 @@ cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducid
 
 }
 
+void liberarPaginas()
+{
+    int idProceso; // id del proceso a liberar
+    int marcosLiberadosReal[256]; // arreglo para guardar la posicion de los marcos que se liberaron de memoria real
+    int cantidadMarcosLiberadosReal = 0; // contador de marcos liberados de memoria real
+
+    int marcosLiberadosVirtual[512]; // arreglo para guardar la posicion de los marcos que se liberaron de memoria virtual
+    int cantidadMarcosLiberadosVirtual = 0; // contador de marcos liberados de memoria virtual
+
+    // leer el id del proceso a liberar de memoria
+    File>>FileRead;
+    istringstream (FileRead) >>idProceso;
+
+    // buscar en memoria real los marcos que pertenecen al id del proceso
+    for (int i=0; i<256; i++) {
+        if (marcosreal[i]==idProceso){
+            marcosreal[i] = -1; // -1 es el valor default de memoria representando vacio
+            marcosrealmodificado[i] = 0; // indicar como no modificado
+            // actualizar timestamp?
+            // registrar los cambios
+            marcosLiberadosReal[cantidadMarcosLiberadosReal] = i;
+            cantidadMarcosLiberadosReal++;
+        }
+    }
+
+    // liberar los marcos de pagina en memoria secundaria de swapping
+    for (int i=0; i<512; i++){
+        if (marcosvirtual[i]==idProceso){
+            marcosvirtual[i] = -1; // valor default para indicar que esta vacio
+            //registrar los cambios
+            marcosLiberadosVirtual[cantidadMarcosLiberadosVirtual] = i;
+            cantidadMarcosLiberadosVirtual++;
+        }
+    }
+    // desplegar resultados
+    // memoria principal
+    if (cantidadMarcosLiberadosReal>0){
+        cout << "Estos son los marcos de pagina que se liberaron en memoria real: ";
+        for (int i=0; i<cantidadMarcosLiberadosReal; i++){
+            cout << marcosLiberadosReal[i] <<", ";
+        }
+        cout << endl;
+    } else {
+        cout << "No hay marcos en memoria real con ese ID" << endl;
+    }
+    // memoria virtual
+    if (cantidadMarcosLiberadosVirtual>0){
+        cout << "Estos son los marcos de pagina que se liberaron en memoria virtual: ";
+        for (int i=0; i<cantidadMarcosLiberadosVirtual; i++){
+            cout<< marcosLiberadosVirtual[i]<< ", ";
+        }
+        cout << endl;
+    } else {
+        cout << "No hay marcos en memoria virtual con ese ID" << endl;
+    }
+}
+
 void Debug()
 {
    int proceso = -1;
    int ini = -1, final = -1;
    cout << "Memoria real" << endl;
+
     for (int i = 0; i < 256; i++)
     {
         if(marcosreal[i] != proceso)
@@ -150,7 +208,7 @@ int main()
 
         if(FileRead == "P" || FileRead == "p"){cargarProceso();}
         //else if(FileRead == "A" || FileRead == "a"){A();}
-        //else if(FileRead == "L" || FileRead == "l"){L();}
+        else if(FileRead == "L" || FileRead == "l"){liberarPaginas();}
         //else if(FileRead == "E" || FileRead == "e"){E();}
         //else if(FileRead == "F" || FileRead == "f"){F();}
         else{}//cout<<FileRead<<endl;}
