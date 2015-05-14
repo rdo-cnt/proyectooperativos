@@ -413,7 +413,7 @@ int main()
         if(FileRead == "P" || FileRead == "p"){cout << "------" << endl; cargarProceso();}
         else if(FileRead == "A" || FileRead == "a"){cout << "------" << endl;accesarVirtual();}
         else if(FileRead == "L" || FileRead == "l"){cout << "------" << endl;liberarPaginas();}
-        //else if(FileRead == "E" || FileRead == "e"){E();}
+        else if(FileRead == "E" || FileRead == "e"){break;}
         //else if(FileRead == "F" || FileRead == "f"){F();}
         else{}//cout<<FileRead<<endl;}
 
