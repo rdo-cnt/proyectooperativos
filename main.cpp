@@ -173,6 +173,8 @@ if (cantMarcos >= 256)
     int tempProceso = marcosreal[marcoLRU];
     //asignar cputime para el timestamp
         marcosrealtimestamps[marcoLRU] = cputime;
+        marcosrealmodificado[marcoLRU] = 0;
+        marcosrealreferenciado[marcoLRU] = 0;
         marcosvirtualtimestamps[cuentaVirtual-1] = cputime;
         marcosreal[marcoLRU] = p;
         marcosvirtual[cuentaVirtual-1] = p;
