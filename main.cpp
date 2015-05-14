@@ -84,62 +84,111 @@ void compactaMemoriaVirtual(){
 
 void cargarProceso()
 {
-    //Formato (P n p)
-    double n = 0;
-    int p = 0;
-    int residuo = 0; //utilizado para saber cuantos marcos de paginación hay que reemplazar cuando se llene la memoria
-    bool lleno = 0; // avisa si esta lleno
+//Formato (P n p)
+double n = 0;
+int p = 0;
+int residuo = 0; //utilizado para saber cuantos marcos de paginación hay que reemplazar cuando se llene la memoria
+bool lleno = 0; // avisa si esta lleno
 
-    //leer n
-    File>>FileRead;
-    istringstream (FileRead) >>n;
-    //leer p
-    File>>FileRead;
-    istringstream (FileRead) >>p;
 
-    //Empezar a meter datos
+//leer n
+File>>FileRead;
+istringstream (FileRead) >>n;
 
-    int introducidas = ceil (n/8);
-    int paginas = cantMarcos + introducidas;
-    lleno = paginas/256;
-    residuo = introducidas % 256;
-    int contadorpaginas = 0;
-    int ultimoMarco = 0;
+//leer p
+File>>FileRead;
+istringstream (FileRead) >>p;
 
-    if (cantMarcos < 256)
+//Debug de direcciones
+//cout << "Proceso: " << p << " Direcciones: " << n << endl;
+
+//Empezar a meter datos
+
+int introducidas = ceil (n/8);
+int paginas = cantMarcos + introducidas;
+lleno = paginas/256;
+residuo = introducidas % 256;
+int contadorpaginas = 0;
+int ultimoMarco = 0;
+if (cantMarcos < 256)
+{
+       for(int i = 0; i < 256 && contadorpaginas < introducidas ; i++)
     {
-           for(int i = 0; i < 256 && contadorpaginas < introducidas ; i++)
+        if (marcosreal[i] == -1)
         {
-            if (marcosreal[i] == -1)
-            {
-                //asignar cputime para el timestamp
-                marcosrealtimestamps[i] = cputime;
-                marcosvirtualtimestamps[i] = cputime;
-                marcosreal[i] = p;
-                marcosvirtual[cuentaVirtual] = p;
-                //subir el cputime, pagefaults, cantMArcos y cuenta Virtual
-                cuentaVirtual++;
-                cputime++;
-                pagefaults++;
-                memorybusy++;
-                contadorpaginas++;
-                cantMarcos++;
-                if(cantMarcos > 255)
-                {
-                    lleno = true;
-                    break;
-                }
-            }
-            ultimoMarco = i;
+        //asignar cputime para el timestamp
+        marcosrealtimestamps[i] = cputime;
+        marcosvirtualtimestamps[i] = cputime;
+        marcosreal[i] = p;
+        marcosvirtual[cuentaVirtual] = p;
+
+        //subir el cputime, pagefaults, cantMArcos y cuenta Virtual
+        cuentaVirtual++;
+        cputime++;
+        pagefaults++;
+        contadorpaginas++;
+        //estos solo se cuentan cuando no esta llena
+
+        cantMarcos++;
+        ultimoMarco = i;
+        if(cantMarcos >= 256 && contadorpaginas < introducidas)
+        {
+            cout << "Se lleno" << endl;
+            lleno = true;
+          break;
         }
+
+        }
+
     }
-    if (cantMarcos > 255)
+}
+if (cantMarcos >= 256)
+{
+    cout << "Esta lleno este pedo" << endl;
+    //empezar a hacer LRU aqui
+    int marcoLRU = 0;
+    bool minfound;
+
+    //siempre y cuando falten paginas que introducir
+    while (contadorpaginas <= introducidas)
     {
-        cout << "Esta lleno" << endl;
-        //empezar a hacer LRU aqui
+    minfound = false;
+    //cout << "empezo el show" << endl;
+    //Primero revisar si alguna marco es el LRU
+    while (!minfound)
+    {
+        for (int i = 0; i < 256; i++)
+        {
+            if(mintimestamp == marcosrealtimestamps[i])
+            {
+                minfound = true;
+                marcoLRU = i;
+                cout << "Se encontro el marco LRU. Era " << marcoLRU << endl;
+                break;
+            }
+        }
+        if (!minfound) mintimestamp++;
     }
-    //Ver si se superaron los 256 marcos con texto
-    cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
+    //Ahora si cambiamos el marco
+    int tempProceso = marcosreal[marcoLRU];
+    //asignar cputime para el timestamp
+        marcosrealtimestamps[marcoLRU] = cputime;
+        marcosvirtualtimestamps[cuentaVirtual-1] = cputime;
+        marcosreal[marcoLRU] = p;
+        marcosvirtual[cuentaVirtual-1] = p;
+
+        contadorpaginas++;
+        cuentaVirtual++;
+        cputime++;
+        pagefaults++;
+    }//acabamos de meter paginas
+
+
+}
+//Ver si se superaron los 256 marcos con texto
+cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
+
+
 }
 
 void liberarPaginas()
@@ -321,7 +370,7 @@ void accesarVirtual()
                {
                    cout << "Se encontro la pagina " << marcovirtualbuscado << " del proceso " << p << " en el marco " << virtualencontrado+marcovirtualbuscado << " de la memoria virtual" << endl;
                    cout << "Se encuentra en el marco " << j << " de la memoria real" << endl;
-                  if(marcosrealtimestamps[j] == mintimestamp)
+                  if(marcosrealtimestamps[i] == mintimestamp)
                   {
                     mintimestamp++;
                     cout << "El marco " << j << " en real solia ser el LRU. Ya no lo es " << endl;
@@ -335,6 +384,7 @@ void accesarVirtual()
                   //si m = 1, modificacion
                   else
                     marcosrealmodificado[j] = 1;
+                    break;
                }
            }
          }
@@ -360,16 +410,16 @@ int main()
 
         File>>FileRead; //agarra cada caracter separado por un espacio.
 
-        if(FileRead == "P" || FileRead == "p"){cargarProceso();}
-        else if(FileRead == "A" || FileRead == "a"){accesarVirtual();}
-        else if(FileRead == "L" || FileRead == "l"){liberarPaginas();}
+        if(FileRead == "P" || FileRead == "p"){cout << "------" << endl; cargarProceso();}
+        else if(FileRead == "A" || FileRead == "a"){cout << "------" << endl;accesarVirtual();}
+        else if(FileRead == "L" || FileRead == "l"){cout << "------" << endl;liberarPaginas();}
         //else if(FileRead == "E" || FileRead == "e"){E();}
         //else if(FileRead == "F" || FileRead == "f"){F();}
         else{}//cout<<FileRead<<endl;}
 
 }//while
     File.close();
-
+cout << "------" << endl;
     //Ver si estan correcto los datos
     Debug();
 
@@ -382,3 +432,4 @@ int main()
 
     return 0;
 }
+
