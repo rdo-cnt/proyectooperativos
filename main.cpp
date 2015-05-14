@@ -188,7 +188,8 @@ if (cantMarcos >= 256)
         marcosvirtualtimestamps[cuentaVirtual-1] = cputime;
         marcosreal[marcoLRU] = p;
         marcosvirtual[cuentaVirtual-1] = p;
-        cout << " marcoLRU, ";
+        cout << " marcoLRU (Pagina " << marcoLRU << " del proceso " << tempProceso << "swappeada a la posición )"  << endl;
+        // inserta arriba la página en la que está
         contadorpaginas++;
         cuentaVirtual++;
         cputime++;
