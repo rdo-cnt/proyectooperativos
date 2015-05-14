@@ -154,7 +154,7 @@ if (cantMarcos < 256)
 }
 if (cantMarcos >= 256)
 {
-    cout << "Se asignaron los marcos de página ";
+    cout << "Se asignaron los marcos de pagina " << endl;
     //empezar a hacer LRU aqui
     int marcoLRU = 0;
     bool minfound;
@@ -188,7 +188,7 @@ if (cantMarcos >= 256)
         marcosvirtualtimestamps[cuentaVirtual-1] = cputime;
         marcosreal[marcoLRU] = p;
         marcosvirtual[cuentaVirtual-1] = p;
-        cout << " marcoLRU (Pagina " << marcoLRU << " del proceso " << tempProceso << "swappeada a la posición )"  << endl;
+        cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << tempProceso << " swappeada a la posicion )"  << endl;
         // inserta arriba la página en la que está
         contadorpaginas++;
         cuentaVirtual++;
