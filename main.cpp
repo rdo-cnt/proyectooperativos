@@ -216,6 +216,8 @@ void liberarPaginas()
     File>>FileRead;
     istringstream (FileRead) >>idProceso;
 
+    cout << "L " << idProceso;
+
     int restaramarcos = 0;
     // buscar en memoria real los marcos que pertenecen al id del proceso
     for (int i=0; i<256; i++) {
@@ -340,9 +342,7 @@ int    proceso = -2;
 
 void accesarVirtual()
 {
-    cout << "corriendo Accesso" << endl;
     int d, p, m;
-
     //leer d
     File>>FileRead;
     istringstream (FileRead) >>d;
@@ -357,6 +357,8 @@ void accesarVirtual()
 
     int marcovirtualbuscado = d/8;
     int virtualencontrado = -1;
+
+    cout << "A " << d << " " << p << " " << m << endl;
 
     for(int i = 0; i < 512; i++ )
     {
