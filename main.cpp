@@ -280,9 +280,9 @@ int    proceso = -2;
                 else
                 {
                     if (i != 255)
-                    {cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;}
+                    {cout << "Del marco " << ini << " al marco " << final << " no hay nada" << endl;}
                     else
-                    {cout << "Del marco : " << ini << " al marco " << final+1 << " no hay nada" << endl;}
+                    {cout << "Del marco " << ini << " al marco " << final+1 << " no hay nada" << endl;}
                 }
 
         ini = i;
