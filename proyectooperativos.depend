@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1431587901 source:c:\users\fofo\documents\programas custom\proyectooperativos\main.cpp
+1431591037 source:c:\users\fofo\documents\programas custom\proyectooperativos\main.cpp
 	<iostream>
 	<string>
 	<fstream>
@@ -8,6 +8,7 @@
 	<math.h>
 	<cmath>
 	<time.h>
+	<ctype.h>
 
 1431551143 source:c:\users\rodolfo\documents\6to sem\proyectooperativos\main.cpp
 	<iostream>

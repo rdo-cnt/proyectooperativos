@@ -6,6 +6,7 @@
 #include <math.h>
 #include <cmath>
 #include <time.h>
+#include <ctype.h>
 using namespace std;
 
 
@@ -18,8 +19,8 @@ string FileRead;
 
 int marcosrealtimestamps[256] = {0}; //(para calcular tiempo en el que se modifico)
 int marcosvirtualtimestamps[512] = {0}; //(para relacionar marcos virtuales con reales)
-int procesoinitimestamp[256] = {0};
-int procesoendimestamp[256] = {0};
+int procesoinitimestamp[5328001] = {0};
+int procesoendimestamp[5328001] = {0};
 int cputime = 0;
 int swaps = 0;
 
@@ -381,20 +382,40 @@ int    proceso = -2;
     }
 }
 
+
 void accesarVirtual()
 {
     int d, p, m;
     //leer d
     File>>FileRead;
+    if (isdigit(FileRead[0]) && FileRead.size() > 0)
     istringstream (FileRead) >>d;
+    else
+    {
+        cout << "comando no valido" << endl;
+      return;
+    }
 
     //leer p
     File>>FileRead;
+    if (isdigit(FileRead[0]) && FileRead.size() > 0)
     istringstream (FileRead) >>p;
+    else
+    {
+        cout << "comando no valido" << endl;
+      return;
+    }
 
     //leer m
     File>>FileRead;
+    if (isdigit(FileRead[0]) && FileRead.size() > 0)
     istringstream (FileRead) >>m;
+    else
+    {
+        cout << "comando no valido" << endl;
+      return;
+    }
+
 
     int marcovirtualbuscado = d/8;
     int virtualencontrado = -1;
@@ -459,10 +480,16 @@ void finalizar()
 {
     //nota: no finaliza, es el F
     cout << "F" << endl;
+    cout << "Info de memorias" << endl;
+
+    cout << "------" << endl;
+    //Ver si estan correcto los datos
+    Debug();
+    cout << "------" << endl;
 
     int turnaroundcount = 0;
     int turnaroundsum = 0;
-    for(int i = 0; i < 256; i++)
+    for(int i = 0; i < 5328001; i++)
     {
         if (procesoinitimestamp[i] != -1 && procesoendimestamp[i] != -1)
         {
@@ -473,7 +500,12 @@ void finalizar()
     }
 
     //promedio turnaround
+    if (turnaroundcount > 0)
     cout << "El tiempo promedio de turnaround es " << turnaroundsum/turnaroundcount << endl;
+    else
+    {
+        cout << "Ningun proceso fue finalizado en esta secuencia" << endl;
+    }
 
     //swaps
     cout << "Huvieron " << swaps << " swaps" << endl;
@@ -485,8 +517,8 @@ void finalizar()
     std::fill_n(marcosvirtual, 512, -1);
     std::fill_n(marcosrealtimestamps, 256, 0);
     std::fill_n(marcosvirtualtimestamps, 512, 0);
-    std::fill_n(procesoinitimestamp, 256, -1);
-    std::fill_n(procesoendimestamp, 256, -1);
+    std::fill_n(procesoinitimestamp, 5328001, -1);
+    std::fill_n(procesoendimestamp, 5328001, -1);
 
     cantMarcos = 0;
     cputime = 0;
@@ -502,8 +534,8 @@ int main()
     string step;
     std::fill_n(marcosreal, 256, -1);
     std::fill_n(marcosvirtual, 512, -1);
-    std::fill_n(procesoinitimestamp, 256, -1);
-    std::fill_n(procesoendimestamp, 256, -1);
+    std::fill_n(procesoinitimestamp, 5328001, -1);
+    std::fill_n(procesoendimestamp, 5328001, -1);
     //Cargar archivo de texto
     File.open("texto.txt");
     while (!File.eof()) {
@@ -515,7 +547,7 @@ int main()
         else if(FileRead == "L" || FileRead == "l"){cout << "------" << endl;liberarPaginas();}
         else if(FileRead == "E" || FileRead == "e"){break;}
         else if(FileRead == "F" || FileRead == "f"){cout << "------" << endl;finalizar();}
-        else{}//cout<<FileRead<<endl;}
+        else{ cout << "------" << endl; cout << "comando no aceptado" << endl;}//cout<<FileRead<<endl;}
         std::cin.get();
 
 }//while
