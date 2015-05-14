@@ -27,6 +27,7 @@ int swaps = 0;
 //variables que manejan marcos
 
 int marcosreal[256]; //(numero de proceso que utiliza el marco)
+int procesotam[5328001]; //saber el tamañp del proceso
 int marcosrealmodificado[256] = {0}; //(0 o 1, modificado o no)
 int marcosrealreferenciado[256] = {0}; //(0 o 1, referenciado o no)
 int marcosvirtual[512];//(apunta al proceso del marco real que tenia la memoria virtual)
@@ -122,6 +123,7 @@ cout << "P " << n << " " << p << endl;
 
 //decir en que cputime empezo el proceso
 procesoinitimestamp[p] = cputime;
+procesotam[p] = introducidas -1 ;
 
 if (cantMarcos < 256)
 {
@@ -223,9 +225,8 @@ if (cantMarcos >= 256)
         //cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << tempProceso << " ha sido reemplazada )"  << endl;
 
         //buscar con que memoria virtual se swapio
-        cout << "La pagina esta en la posicion " << cuentaVirtual-1 << " en la memoria virtual " << endl;
         cout << "<El marco " << marcoLRU << " en mem real ahora le pertenece al proceso " << p << " (previo: " << tempProceso << ")>"<< endl;
-
+        cout << "La pagina esta en la posicion " << cuentaVirtual << " en la memoria virtual " << endl;
 
         // inserta arriba la página en la que está
         contadorpaginas++;
@@ -425,6 +426,12 @@ void accesarVirtual()
 
     cout << "A " << d << " " << p << " " << m << endl;
 
+    if (procesotam[p] < marcovirtualbuscado )
+    {
+        cout << "Ese numero de pagina es excedente" << endl;
+        return;
+    }
+
     for(int i = 0; i < 512; i++ )
     {
         if(marcosvirtual[i] == p)
@@ -471,7 +478,6 @@ void accesarVirtual()
         }
         if (!virtualarealexiste)
            {
-               //introducir ese marco a la real con LRU
 
     cout << "Pagina no esta en real, se hara LRU " << endl;
     //empezar a hacer LRU aqui
@@ -572,6 +578,7 @@ void finalizar()
     std::fill_n(marcosvirtualtimestamps, 512, 0);
     std::fill_n(procesoinitimestamp, 5328001, -1);
     std::fill_n(procesoendimestamp, 5328001, -1);
+    std::fill_n(procesotam, 5328001, 0);
 
     cantMarcos = 0;
     cputime = 0;
@@ -589,6 +596,7 @@ int main()
     std::fill_n(marcosvirtual, 512, -1);
     std::fill_n(procesoinitimestamp, 5328001, -1);
     std::fill_n(procesoendimestamp, 5328001, -1);
+    std::fill_n(procesotam, 5328001, 0);
     //Cargar archivo de texto
     File.open("texto.txt");
     while (!File.eof()) {
