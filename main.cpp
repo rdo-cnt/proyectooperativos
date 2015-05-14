@@ -109,6 +109,7 @@ istringstream (FileRead) >>p;
 //Empezar a meter datos
 
 int introducidas = ceil (n/8);
+cout << "Numero de paginas introducidas " << introducidas << endl;
 int paginas = cantMarcos + introducidas;
 lleno = paginas/256;
 residuo = introducidas % 256;
@@ -193,7 +194,7 @@ if (cantMarcos >= 256)
     bool minfound;
 
     //siempre y cuando falten paginas que introducir
-    while (contadorpaginas <= introducidas)
+    while (contadorpaginas < introducidas)
     {
     minfound = false;
     //cout << "empezo el show" << endl;
@@ -218,9 +219,9 @@ if (cantMarcos >= 256)
         marcosrealtimestamps[marcoLRU] = cputime;
         marcosrealmodificado[marcoLRU] = 0;
         marcosrealreferenciado[marcoLRU] = 0;
-        marcosvirtualtimestamps[cuentaVirtual-1] = cputime;
+        marcosvirtualtimestamps[cuentaVirtual] = cputime;
         marcosreal[marcoLRU] = p;
-        marcosvirtual[cuentaVirtual-1] = p;
+        marcosvirtual[cuentaVirtual] = p;
         swaps++;
         //cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << tempProceso << " ha sido reemplazada )"  << endl;
 
