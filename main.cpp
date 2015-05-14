@@ -18,6 +18,8 @@ string FileRead;
 
 int marcosrealtimestamps[256] = {0}; //(para calcular tiempo en el que se modifico)
 int marcosvirtualtimestamps[512] = {0}; //(para relacionar marcos virtuales con reales)
+int procesoinitimestamp[256] = {0};
+int procesoendimestamp[256] = {0};
 int cputime = 0;
 
 //variables que manejan marcos
@@ -26,7 +28,6 @@ int marcosreal[256]; //(numero de proceso que utiliza el marco)
 int marcosrealmodificado[256] = {0}; //(0 o 1, modificado o no)
 int marcosrealreferenciado[256] = {0}; //(0 o 1, referenciado o no)
 int marcosvirtual[512];//(apunta al proceso del marco real que tenia la memoria virtual)
-int memorybusy = 0; //con 256 se llena
 
 int cantMarcos = 0;
 int cuentaVirtual = 0;
@@ -116,6 +117,9 @@ int numeroFinal = 0; // numero del marco utilizado en una corrida (Final)
 
 // aqui empieza el verdadero cout
 cout << "P " << n << " " << p << endl;
+
+//decir en que cputime empezo el proceso
+procesoinitimestamp[p] = cputime;
 
 if (cantMarcos < 256)
 {
@@ -217,6 +221,9 @@ void liberarPaginas()
     istringstream (FileRead) >>idProceso;
 
     cout << "L " << idProceso << endl;
+
+    //Acabo proceso
+    procesoendimestamp[idProceso] = cputime;
 
     int restaramarcos = 0;
     // buscar en memoria real los marcos que pertenecen al id del proceso
@@ -413,10 +420,44 @@ void accesarVirtual()
 
 
 }
+
+void finalizar()
+{
+    //nota: no finaliza, es el F
+    cout << "F" << endl;
+
+    for(int i = 0; i < 256; i++)
+    {
+        if (procesoinitimestamp[i] != -1 && procesoendimestamp[i] != -1)
+        {
+            cout << "Tiempo de retorno del proceso " << i << "  es: " << procesoendimestamp[i] << " - " << procesoinitimestamp[i] <<" = "<<procesoendimestamp[i] - procesoinitimestamp[i] << endl;
+        }
+    }
+
+    //lo ultimo, reinicio todo lo necesario
+    std::fill_n(marcosreal, 256, -1);
+    std::fill_n(marcosrealmodificado, 256, -1);
+    std::fill_n(marcosrealreferenciado, 256, -1);
+    std::fill_n(marcosvirtual, 512, -1);
+    std::fill_n(marcosrealtimestamps, 256, 0);
+    std::fill_n(marcosvirtualtimestamps, 512, 0);
+    std::fill_n(procesoinitimestamp, 256, -1);
+    std::fill_n(procesoendimestamp, 256, -1);
+
+    cantMarcos = 0;
+    cputime = 0;
+    cuentaVirtual = 0;
+    mintimestamp = 0;
+    pagefaults = 0;
+
+}
+
 int main()
 {
     std::fill_n(marcosreal, 256, -1);
     std::fill_n(marcosvirtual, 512, -1);
+    std::fill_n(procesoinitimestamp, 256, -1);
+    std::fill_n(procesoendimestamp, 256, -1);
     //Cargar archivo de texto
     File.open("texto.txt");
     while (!File.eof()) {
@@ -427,7 +468,7 @@ int main()
         else if(FileRead == "A" || FileRead == "a"){cout << "------" << endl;accesarVirtual();}
         else if(FileRead == "L" || FileRead == "l"){cout << "------" << endl;liberarPaginas();}
         else if(FileRead == "E" || FileRead == "e"){break;}
-        //else if(FileRead == "F" || FileRead == "f"){F();}
+        else if(FileRead == "F" || FileRead == "f"){cout << "------" << endl;finalizar();}
         else{}//cout<<FileRead<<endl;}
 
 }//while
