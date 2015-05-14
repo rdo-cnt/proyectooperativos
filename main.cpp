@@ -178,22 +178,8 @@ void cargarProceso()
 
     }
     cout << "En el tiempo " << procesoinitimestamp[p] << endl;
-}
-if (cantMarcos >= 256)
-{
-    cout << "Esta llena la memoria, se hara swapping con LRU " << endl;
-    //empezar a hacer LRU aqui
-    int marcoLRU = 0;
-    bool minfound;
-
-    //siempre y cuando falten paginas que introducir
-    while (contadorpaginas < introducidas)
-    {
-    minfound = false;
-    //cout << "empezo el show" << endl;
-    //Primero revisar si alguna marco es el LRU
-    while (!minfound)
-
+    }
+    if (cantMarcos >= 256)
     {
         cout << "Se asignaron los marcos de pagina " << endl;
         //empezar a hacer LRU aqui
@@ -242,37 +228,6 @@ if (cantMarcos >= 256)
         cout << " al proceso " << p << endl;
         cout << "En el tiempo " << procesoinitimestamp[p] << endl;
     }
-
-    //Ahora si cambiamos el marco
-    int tempProceso = marcosreal[marcoLRU];
-    //asignar cputime para el timestamp
-        marcosrealtimestamps[marcoLRU] = cputime;
-        marcosrealmodificado[marcoLRU] = 0;
-        marcosrealreferenciado[marcoLRU] = 0;
-        marcosvirtualtimestamps[cuentaVirtual] = cputime;
-        marcosreal[marcoLRU] = p;
-        marcosvirtual[cuentaVirtual] = p;
-        //swaps++;
-        //cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << tempProceso << " ha sido reemplazada )"  << endl;
-
-        //buscar con que memoria virtual se swapio
-        cout << "<El marco " << marcoLRU << " en mem real ahora le pertenece al proceso " << p << " (previo: " << tempProceso << ")>"<< endl;
-        cout << "La pagina esta en la posicion " << cuentaVirtual << " en la memoria virtual " << endl;
-
-        // inserta arriba la página en la que está
-        contadorpaginas++;
-        cuentaVirtual++;
-        cputime++;
-        pagefaults++;
-    }//acabamos de meter paginas
-
-    cout << " al proceso " << p << endl;
-    cout << "En el tiempo " << procesoinitimestamp[p] << endl;
-}
-//Ver si se superaron los 256 marcos con texto
-// cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
-
-
 }
 
 void liberarPaginas()
@@ -512,7 +467,7 @@ void accesarVirtual()
         if (!virtualarealexiste)
            {
 
-    cout << "Pagina no esta en real, se hara swapping con LRU" << endl;
+    cout << "Pagina no esta en real, se hara LRU " << endl;
     //empezar a hacer LRU aqui
     int marcoLRU = 0;
     bool minfound;
