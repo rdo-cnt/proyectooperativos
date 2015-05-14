@@ -188,7 +188,7 @@ if (cantMarcos < 256)
 }
 if (cantMarcos >= 256)
 {
-    cout << "Se asignaron los marcos de pagina " << endl;
+    cout << "Esta llena la memoria, se hara swapping con LRU " << endl;
     //empezar a hacer LRU aqui
     int marcoLRU = 0;
     bool minfound;
@@ -222,7 +222,7 @@ if (cantMarcos >= 256)
         marcosvirtualtimestamps[cuentaVirtual] = cputime;
         marcosreal[marcoLRU] = p;
         marcosvirtual[cuentaVirtual] = p;
-        swaps++;
+        //swaps++;
         //cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << tempProceso << " ha sido reemplazada )"  << endl;
 
         //buscar con que memoria virtual se swapio
@@ -480,7 +480,7 @@ void accesarVirtual()
         if (!virtualarealexiste)
            {
 
-    cout << "Pagina no esta en real, se hara LRU " << endl;
+    cout << "Pagina no esta en real, se hara swapping con LRU" << endl;
     //empezar a hacer LRU aqui
     int marcoLRU = 0;
     bool minfound;
