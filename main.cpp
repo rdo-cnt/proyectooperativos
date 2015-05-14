@@ -110,12 +110,21 @@ lleno = paginas/256;
 residuo = introducidas % 256;
 int contadorpaginas = 0;
 int ultimoMarco = 0;
+int primero = 0; // contador para saber cuales el primer elemento en uno corrido
+int numeroPrimero = 0; // numero del marco utilizado en una corrida (PRIMERO)
+int numeroFinal = 0; // numero del marco utilizado en una corrida (Final)
+
+// aqui empieza el verdadero cout
+cout << "P " << n << " " << p << endl;
+
 if (cantMarcos < 256)
 {
        for(int i = 0; i < 256 && contadorpaginas < introducidas ; i++)
     {
         if (marcosreal[i] == -1)
         {
+            primero++;
+            if (primero == 1) numeroPrimero = i;
         //asignar cputime para el timestamp
         marcosrealtimestamps[i] = cputime;
         marcosvirtualtimestamps[i] = cputime;
@@ -132,19 +141,20 @@ if (cantMarcos < 256)
         cantMarcos++;
         ultimoMarco = i;
         if(cantMarcos >= 256 && contadorpaginas < introducidas)
-        {
-            cout << "Se lleno" << endl;
+            {
+            // cout << "Se lleno" << endl;
             lleno = true;
-          break;
-        }
+            break;
+            }
 
         }
 
     }
+    cout << "Se asignaron los marcos de pagina " << numeroPrimero << "-" << ultimoMarco << " al proceso " << p << "." << endl; // cout contiguo
 }
 if (cantMarcos >= 256)
 {
-    cout << "Esta lleno este pedo" << endl;
+    cout << "Se asignaron los marcos de página ";
     //empezar a hacer LRU aqui
     int marcoLRU = 0;
     bool minfound;
@@ -163,7 +173,7 @@ if (cantMarcos >= 256)
             {
                 minfound = true;
                 marcoLRU = i;
-                cout << "Se encontro el marco LRU. Era " << marcoLRU << endl;
+                // cout << "Se encontro el marco LRU. Era " << marcoLRU << endl;
                 break;
             }
         }
@@ -178,18 +188,18 @@ if (cantMarcos >= 256)
         marcosvirtualtimestamps[cuentaVirtual-1] = cputime;
         marcosreal[marcoLRU] = p;
         marcosvirtual[cuentaVirtual-1] = p;
-
+        cout << " marcoLRU (Pagina " << marcoLRU << " del proceso " << tempProceso << "swappeada a la posición )"  << endl;
+        // inserta arriba la página en la que está
         contadorpaginas++;
         cuentaVirtual++;
         cputime++;
         pagefaults++;
     }//acabamos de meter paginas
 
-
+    cout << " al proceso " << p << endl;
 }
 //Ver si se superaron los 256 marcos con texto
-cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
-
+// cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
 
 }
 
