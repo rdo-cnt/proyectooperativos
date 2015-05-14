@@ -155,7 +155,31 @@ if (cantMarcos < 256)
         }
 
     }
-    cout << "Se asignaron los marcos de pagina " << numeroPrimero << "-" << ultimoMarco << " al proceso " << p << "." << endl; // cout contiguo
+    int ini = 0, final = -1;
+    int proceso = -2;
+
+    for (int i = 0; i < 256; i++)
+    {
+        if(marcosreal[i] != proceso || i == 255 )
+        {
+            if (i != 0)
+            {
+                final = i -1;
+            if (marcosreal[final] == p)
+            {
+                if (i != 255)
+              {cout << "Se asignaros los marcos " << ini << "-" << final << " al proceso " << p  << endl;}
+              else
+              {cout << "Se asignaros los marcos " << ini << "-" << final+1 << " al proceso " << p  << endl;}
+            }
+        ini = i;
+
+        }
+        proceso = marcosreal[i];
+
+        }
+
+    }
     cout << "En el tiempo " << procesoinitimestamp[p] << endl;
 }
 if (cantMarcos >= 256)
