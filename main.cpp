@@ -173,6 +173,8 @@ if (cantMarcos >= 256)
     int tempProceso = marcosreal[marcoLRU];
     //asignar cputime para el timestamp
         marcosrealtimestamps[marcoLRU] = cputime;
+        marcosrealmodificado[marcoLRU] = 0;
+        marcosrealreferenciado[marcoLRU] = 0;
         marcosvirtualtimestamps[cuentaVirtual-1] = cputime;
         marcosreal[marcoLRU] = p;
         marcosvirtual[cuentaVirtual-1] = p;
@@ -278,9 +280,9 @@ int    proceso = -2;
                 else
                 {
                     if (i != 255)
-                    {cout << "Del marco : " << ini << " al marco " << final << " no hay nada" << endl;}
+                    {cout << "Del marco " << ini << " al marco " << final << " no hay nada" << endl;}
                     else
-                    {cout << "Del marco : " << ini << " al marco " << final+1 << " no hay nada" << endl;}
+                    {cout << "Del marco " << ini << " al marco " << final+1 << " no hay nada" << endl;}
                 }
 
         ini = i;
@@ -413,7 +415,7 @@ int main()
         if(FileRead == "P" || FileRead == "p"){cout << "------" << endl; cargarProceso();}
         else if(FileRead == "A" || FileRead == "a"){cout << "------" << endl;accesarVirtual();}
         else if(FileRead == "L" || FileRead == "l"){cout << "------" << endl;liberarPaginas();}
-        //else if(FileRead == "E" || FileRead == "e"){E();}
+        else if(FileRead == "E" || FileRead == "e"){break;}
         //else if(FileRead == "F" || FileRead == "f"){F();}
         else{}//cout<<FileRead<<endl;}
 
