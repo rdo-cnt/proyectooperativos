@@ -178,7 +178,6 @@ void cargarProceso()
 
     }
     cout << "En el tiempo " << procesoinitimestamp[p] << endl;
-<<<<<<< HEAD
 }
 if (cantMarcos >= 256)
 {
@@ -243,7 +242,7 @@ if (cantMarcos >= 256)
         cout << " al proceso " << p << endl;
         cout << "En el tiempo " << procesoinitimestamp[p] << endl;
     }
-<<<<<<< HEAD
+
     //Ahora si cambiamos el marco
     int tempProceso = marcosreal[marcoLRU];
     //asignar cputime para el timestamp
@@ -273,8 +272,7 @@ if (cantMarcos >= 256)
 //Ver si se superaron los 256 marcos con texto
 // cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
 
-=======
->>>>>>> origin/master
+
 }
 
 void liberarPaginas()
