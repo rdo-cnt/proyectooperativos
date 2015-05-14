@@ -21,6 +21,7 @@ int marcosvirtualtimestamps[512] = {0}; //(para relacionar marcos virtuales con 
 int procesoinitimestamp[256] = {0};
 int procesoendimestamp[256] = {0};
 int cputime = 0;
+int swaps = 0;
 
 //variables que manejan marcos
 
@@ -155,6 +156,7 @@ if (cantMarcos < 256)
 
     }
     cout << "Se asignaron los marcos de pagina " << numeroPrimero << "-" << ultimoMarco << " al proceso " << p << "." << endl; // cout contiguo
+    cout << "En el tiempo " << procesoinitimestamp[p] << endl;
 }
 if (cantMarcos >= 256)
 {
@@ -192,6 +194,7 @@ if (cantMarcos >= 256)
         marcosvirtualtimestamps[cuentaVirtual-1] = cputime;
         marcosreal[marcoLRU] = p;
         marcosvirtual[cuentaVirtual-1] = p;
+        swaps++;
         cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << tempProceso << " swappeada a la posicion )"  << endl;
         // inserta arriba la página en la que está
         contadorpaginas++;
@@ -201,6 +204,7 @@ if (cantMarcos >= 256)
     }//acabamos de meter paginas
 
     cout << " al proceso " << p << endl;
+    cout << "En el tiempo " << procesoinitimestamp[p] << endl;
 }
 //Ver si se superaron los 256 marcos con texto
 // cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
@@ -224,6 +228,8 @@ void liberarPaginas()
 
     //Acabo proceso
     procesoendimestamp[idProceso] = cputime;
+
+    cout << "El proceso acabo en el tiempo " << cputime << endl;
 
     int restaramarcos = 0;
     // buscar en memoria real los marcos que pertenecen al id del proceso
@@ -426,13 +432,23 @@ void finalizar()
     //nota: no finaliza, es el F
     cout << "F" << endl;
 
+    int turnaroundcount = 0;
+    int turnaroundsum = 0;
     for(int i = 0; i < 256; i++)
     {
         if (procesoinitimestamp[i] != -1 && procesoendimestamp[i] != -1)
         {
+            turnaroundsum += procesoendimestamp[i] - procesoinitimestamp[i];
+            turnaroundcount++;
             cout << "Tiempo de retorno del proceso " << i << "  es: " << procesoendimestamp[i] << " - " << procesoinitimestamp[i] <<" = "<<procesoendimestamp[i] - procesoinitimestamp[i] << endl;
         }
     }
+
+    //promedio turnaround
+    cout << "El tiempo promedio de turnaround es " << turnaroundsum/turnaroundcount << endl;
+
+    //swaps
+    cout << "Huvieron " << swaps << " swaps" << endl;
 
     //lo ultimo, reinicio todo lo necesario
     std::fill_n(marcosreal, 256, -1);
@@ -449,6 +465,7 @@ void finalizar()
     cuentaVirtual = 0;
     mintimestamp = 0;
     pagefaults = 0;
+    swaps = 0;
 
 }
 
