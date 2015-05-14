@@ -499,6 +499,7 @@ void finalizar()
 
 int main()
 {
+    string step;
     std::fill_n(marcosreal, 256, -1);
     std::fill_n(marcosvirtual, 512, -1);
     std::fill_n(procesoinitimestamp, 256, -1);
@@ -515,6 +516,7 @@ int main()
         else if(FileRead == "E" || FileRead == "e"){break;}
         else if(FileRead == "F" || FileRead == "f"){cout << "------" << endl;finalizar();}
         else{}//cout<<FileRead<<endl;}
+        std::cin.get();
 
 }//while
     File.close();
