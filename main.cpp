@@ -220,6 +220,10 @@ if (cantMarcos >= 256)
         marcosvirtual[cuentaVirtual-1] = p;
         swaps++;
         cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << tempProceso << " swappeada a la posicion )"  << endl;
+
+        //buscar con que memoria virtual se swapio
+        cout << "La pagina quedo en la posicion " << cuentaVirtual-1 << " en la memoria virtual " << endl;
+
         // inserta arriba la página en la que está
         contadorpaginas++;
         cuentaVirtual++;
