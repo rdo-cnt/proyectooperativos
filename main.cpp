@@ -84,132 +84,62 @@ void compactaMemoriaVirtual(){
 
 void cargarProceso()
 {
-//Formato (P n p)
-double n = 0;
-int p = 0;
-int residuo = 0; //utilizado para saber cuantos marcos de paginación hay que reemplazar cuando se llene la memoria
-bool lleno = 0; // avisa si esta lleno
+    //Formato (P n p)
+    double n = 0;
+    int p = 0;
+    int residuo = 0; //utilizado para saber cuantos marcos de paginación hay que reemplazar cuando se llene la memoria
+    bool lleno = 0; // avisa si esta lleno
 
+    //leer n
+    File>>FileRead;
+    istringstream (FileRead) >>n;
+    //leer p
+    File>>FileRead;
+    istringstream (FileRead) >>p;
 
-//leer n
-File>>FileRead;
-istringstream (FileRead) >>n;
+    //Empezar a meter datos
 
-//leer p
-File>>FileRead;
-istringstream (FileRead) >>p;
+    int introducidas = ceil (n/8);
+    int paginas = cantMarcos + introducidas;
+    lleno = paginas/256;
+    residuo = introducidas % 256;
+    int contadorpaginas = 0;
+    int ultimoMarco = 0;
 
-//Debug de direcciones
-//cout << "Proceso: " << p << " Direcciones: " << n << endl;
-
-//Empezar a meter datos
-
-int introducidas = ceil (n/8);
-int paginas = cantMarcos + introducidas;
-lleno = paginas/256;
-residuo = introducidas % 256;
-int contadorpaginas = 0;
-int ultimoMarco = 0;
-
-if (cantMarcos < 256)
-{
-       for(int i = 0; i < 256 && contadorpaginas < introducidas ; i++)
+    if (cantMarcos < 256)
     {
-        if (marcosreal[i] == -1)
-        {
-        //asignar cputime para el timestamp
-        marcosrealtimestamps[i] = cputime;
-        marcosvirtualtimestamps[i] = cputime;
-        marcosreal[i] = p;
-        marcosvirtual[cuentaVirtual] = p;
-
-        //subir el cputime, pagefaults, cantMArcos y cuenta Virtual
-        cuentaVirtual++;
-        cputime++;
-        pagefaults++;
-        memorybusy++;
-        contadorpaginas++;
-        cantMarcos++;
-        if(cantMarcos > 255)
-        {
-            lleno = true;
-          break;
-        }
-
-        }
-        ultimoMarco = i;
-    }
-}
-if (cantMarcos > 255)
-{
-    cout << "Esta lleno este pedo" << endl;
-    //empezar a hacer LRU aqui
-}
-//Ver si se superaron los 256 marcos con texto
-cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
-
-
-
-/*
-//Si hay espacio en memoria real
-if(lleno == 0)
-{
-    ultimoMarco = (residuo + cantMarcos) ;
-    //cout << residuo << " " <<cantMarcos << " " <<ultimoMarco << endl;
-    for(int i = cantMarcos; i < ultimoMarco; i++)
-    {
-        if (marcosreal[i] == -1)
-        {
-        //asignar cputime para el timestamp
-        marcosrealtimestamps[i] = cputime;
-        marcosvirtualtimestamps[i] = cputime;
-        marcosreal[i] = p;
-        marcosvirtual[cuentaVirtual] = p;
-
-        //subir el cputime, pagefaults y cuenta Virtual
-        cuentaVirtual++;
-        cputime++;
-        pagefaults++;
-        }
-    }
-    cantMarcos += residuo;
-}
-else
-{
-    cout << "El proceso " << p <<" llenara la memoria" << endl;
-    int faltantes = introducidas;
-    //checar si quedan espacios libres
-    if (cantMarcos < 255)
-    {
-        ultimoMarco = 256;
-        int restanteMarcos = 256-cantMarcos;
-
-        for(int i = cantMarcos; i < ultimoMarco; i++)
+           for(int i = 0; i < 256 && contadorpaginas < introducidas ; i++)
         {
             if (marcosreal[i] == -1)
-        {
-          marcosrealtimestamps[i] = cputime;
-          marcosvirtualtimestamps[i] = cputime;
-          marcosreal[i] = p;
-          marcosvirtual[cuentaVirtual] = p;
-           //subir el cputime, pagefaults y cuenta Virtual
-        cuentaVirtual++;
-        cputime++;
-        pagefaults++;
+            {
+                //asignar cputime para el timestamp
+                marcosrealtimestamps[i] = cputime;
+                marcosvirtualtimestamps[i] = cputime;
+                marcosreal[i] = p;
+                marcosvirtual[cuentaVirtual] = p;
+                //subir el cputime, pagefaults, cantMArcos y cuenta Virtual
+                cuentaVirtual++;
+                cputime++;
+                pagefaults++;
+                memorybusy++;
+                contadorpaginas++;
+                cantMarcos++;
+                if(cantMarcos > 255)
+                {
+                    lleno = true;
+                    break;
+                }
+            }
+            ultimoMarco = i;
         }
-        }
-        cantMarcos = 255;
-        cout << "Quedaron fuera " << restanteMarcos << " paginas. Se aplicara LRU" << endl;
     }
-    //Empezar LRU para insertar
-
-
-}
-*/
-
-
-
-
+    if (cantMarcos > 255)
+    {
+        cout << "Esta lleno" << endl;
+        //empezar a hacer LRU aqui
+    }
+    //Ver si se superaron los 256 marcos con texto
+    cout << "Paginas: " << cantMarcos << " Lleno: " << lleno << " Paginas introducidas: " << residuo << " hecho por el proceso: " << marcosreal[ultimoMarco] << endl;
 }
 
 void liberarPaginas()
