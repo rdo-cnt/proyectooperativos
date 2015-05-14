@@ -386,6 +386,7 @@ int    proceso = -2;
 void accesarVirtual()
 {
     int d, p, m;
+    bool virtualarealexiste = false;
     //leer d
     File>>FileRead;
     if (isdigit(FileRead[0]) && FileRead.size() > 0)
@@ -450,8 +451,9 @@ void accesarVirtual()
                     mintimestamp++;
                     cout << "El marco " << j << " en real solia ser el LRU. Ya no lo es " << endl;
                   }
-
+                  virtualarealexiste = true;
                   marcosrealtimestamps[j] =  cputime;
+                  marcosvirtualtimestamps[i] = cputime; //new
                   cputime++;
                   //si m = 0, referencia
                   if (m == 0)
@@ -465,6 +467,54 @@ void accesarVirtual()
          }
          contador++;
         }
+        if (!virtualarealexiste)
+           {
+               //introducir ese marco a la real con LRU
+
+    cout << "Pagina no esta en real, se hara LRU " << endl;
+    //empezar a hacer LRU aqui
+    int marcoLRU = 0;
+    bool minfound;
+
+    //siempre y cuando falten paginas que introducir
+    minfound = false;
+    //cout << "empezo el show" << endl;
+
+    //Buscar marco LRU
+    while (!minfound)
+    {
+        for (int i = 0; i < 256; i++)
+        {
+            if(mintimestamp == marcosrealtimestamps[i])
+            {
+                minfound = true;
+                marcoLRU = i;
+                // cout << "Se encontro el marco LRU. Era " << marcoLRU << endl;
+                break;
+            }
+        }
+        if (!minfound) mintimestamp++;
+    }
+    //Ahora si cambiamos el marco
+    int tempProceso = marcosreal[marcoLRU];
+    //asignar cputime para el timestamp
+        marcosrealtimestamps[marcoLRU] = cputime;
+        marcosrealmodificado[marcoLRU] = 0;
+        marcosrealreferenciado[marcoLRU] = 0;
+        marcosvirtualtimestamps[marcovirtualbuscado] = cputime; //cambiar
+        marcosreal[marcoLRU] = p;
+        marcosvirtual[marcovirtualbuscado] = p;
+        swaps++;
+        //cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << p << " swappeada a la posicion )"  << endl;
+
+        //buscar con que memoria virtual se swapio
+        cout << "La pagina esta en la posicion " << marcovirtualbuscado << " en la memoria virtual " << endl;
+        cout << "La pagina ahora se ubica en el marco " << marcoLRU << " en la memoria real" << endl;
+
+        // inserta arriba la página en la que está
+        cputime++;
+        pagefaults++;
+    }//acabamos de meter paginas
 
     }
 

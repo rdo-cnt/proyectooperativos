@@ -10,7 +10,7 @@
 	<time.h>
 	<ctype.h>
 
-1431551143 source:c:\users\rodolfo\documents\6to sem\proyectooperativos\main.cpp
+1431611536 source:c:\users\rodolfo\documents\6to sem\proyectooperativos\main.cpp
 	<iostream>
 	<string>
 	<fstream>
@@ -19,6 +19,7 @@
 	<math.h>
 	<cmath>
 	<time.h>
+	<ctype.h>
 
 1431551071 source:c:\users\cesar\desktop\proyectoso\main.cpp
 	<iostream>
