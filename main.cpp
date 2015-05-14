@@ -220,10 +220,12 @@ if (cantMarcos >= 256)
         marcosreal[marcoLRU] = p;
         marcosvirtual[cuentaVirtual-1] = p;
         swaps++;
-        cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << tempProceso << " swappeada a la posicion )"  << endl;
+        //cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << tempProceso << " ha sido reemplazada )"  << endl;
 
         //buscar con que memoria virtual se swapio
-        cout << "La pagina quedo en la posicion " << cuentaVirtual-1 << " en la memoria virtual " << endl;
+        cout << "La pagina esta en la posicion " << cuentaVirtual-1 << " en la memoria virtual " << endl;
+        cout << "<El marco " << marcoLRU << " en mem real ahora le pertenece al proceso " << p << " (previo: " << tempProceso << ")>"<< endl;
+
 
         // inserta arriba la página en la que está
         contadorpaginas++;
@@ -505,11 +507,12 @@ void accesarVirtual()
         marcosreal[marcoLRU] = p;
         marcosvirtual[marcovirtualbuscado] = p;
         swaps++;
-        //cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << p << " swappeada a la posicion )"  << endl;
+        //cout << " Marco LRU (Pagina " << marcoLRU << " del proceso " << tempProceso << " ha sido reemplazada )"  << endl;
 
         //buscar con que memoria virtual se swapio
         cout << "La pagina esta en la posicion " << marcovirtualbuscado << " en la memoria virtual " << endl;
-        cout << "La pagina ahora se ubica en el marco " << marcoLRU << " en la memoria real" << endl;
+        //cout << "La pagina ahora se ubica en el marco " << marcoLRU << " en la memoria real" << endl;
+        cout << "<El marco " << marcoLRU << " en mem real ahora le pertenece al proceso " << p << " (previo: " << tempProceso << ")>"<< endl;
 
         // inserta arriba la página en la que está
         cputime++;
